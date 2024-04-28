@@ -3,7 +3,9 @@ class Candidat {
   String? surname;
   String? description;
   String? image;
-  Candidat({this.name, this.surname, this.description, this.image});
+  String? program;
+  String ? birthday;
+  Candidat({this.name, this.surname, this.description, this.image,this.program,this.birthday});
 
   Map<String, dynamic> toJson() {
     return {

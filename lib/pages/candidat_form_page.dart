@@ -1,12 +1,10 @@
-
 import 'package:devoir/common/input.dart';
 import 'package:devoir/models/candidat_page.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert' as convert;
+import 'dart:convert' show base64Encode;
 import '../common/button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-
 
 class CandidatInscription extends StatefulWidget {
   const CandidatInscription({super.key});
@@ -18,14 +16,13 @@ class CandidatInscription extends StatefulWidget {
 class _CandidatInscriptionState extends State<CandidatInscription> {
   DateTime? birthdate;
   final _formKey = GlobalKey<FormState>();
-  final Candidat candidat= Candidat();
+  final Candidat candidat = Candidat();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Creation de canidat", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
-
       ),
       body: Container(
         padding: EdgeInsets.all(10),
@@ -33,10 +30,7 @@ class _CandidatInscriptionState extends State<CandidatInscription> {
           key: _formKey,
           child: ListView(
             children: [
-              MyWidget(
-
-
-              ),
+              MyWidget(candidat: candidat),
               Inputwidget(
                 name: 'Nom',
                 contentPadding: EdgeInsets.symmetric(vertical: 20.0),
@@ -46,12 +40,8 @@ class _CandidatInscriptionState extends State<CandidatInscription> {
                   }
                 },
                 onSaved: (value) {
-
-                  // print("Valeur à sauvegarder $value");
-                  candidat.name=value;
-
+                  candidat.name = value;
                 },
-
                 prefixIcon: Icon(Icons.person),
               ),
               SizedBox(height: 20,),
@@ -64,12 +54,8 @@ class _CandidatInscriptionState extends State<CandidatInscription> {
                   }
                 },
                 onSaved: (value) {
-
-                  // print("Valeur à sauvegarder $value");
-                  candidat.surname=value;
-
+                  candidat.surname = value;
                 },
-
                 prefixIcon: Icon(Icons.person),
               ),
               SizedBox(height: 20,),
@@ -82,10 +68,8 @@ class _CandidatInscriptionState extends State<CandidatInscription> {
                   }
                 },
                 onSaved: (value) {
-                  candidat.description=value;
-
+                  candidat.program = value;
                 },
-
                 prefixIcon: Icon(Icons.flag),
               ),
               SizedBox(height: 20,),
@@ -98,18 +82,11 @@ class _CandidatInscriptionState extends State<CandidatInscription> {
                   }
                 },
                 onSaved: (value) {
-                  candidat.description=value;
-
+                  candidat.description = value;
                 },
-
                 prefixIcon: Icon(Icons.description),
               ),
               SizedBox(height: 20,),
-
-
-
-
-
               SizedBox(height: 10,),
               ListTile(
                 title: Text("Date de naissance"),
@@ -117,45 +94,38 @@ class _CandidatInscriptionState extends State<CandidatInscription> {
                 trailing: Icon(Icons.calendar_month),
                 onTap: () async {
                   birthdate = await showDatePicker(
-                      cancelText: "Annuler",
-                      confirmText: "Confirmer",
+                      cancelText: "Cancel",
+                      confirmText: "Okay",
                       barrierColor: Colors.green.shade50,
                       context: context,
                       firstDate: DateTime(1990),
                       lastDate: DateTime.now());
+                  candidat.birthday = birthdate.toString();
                   setState(() {});
                 },
               ),
-
-
             ],
           ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-
-          child:  Button(
-            onPressed: ()  {
-
-              if(_formKey.currentState!.validate()){
-
-                _formKey.currentState!.save();
+          child: Button(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 Navigator.pop(context, candidat);
-
-
-
-              };
-
+              }
             },
-
             text: "S'inscrire",
-          )
-      ),
+          )),
     );
   }
 }
+
 class MyWidget extends StatefulWidget {
+  final Candidat candidat;
+  const MyWidget({required this.candidat});
+
   @override
   _MyWidgetState createState() => _MyWidgetState();
 }
@@ -168,6 +138,7 @@ class _MyWidgetState extends State<MyWidget> {
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
+        widget.candidat.image = base64Encode(_imageFile!.readAsBytesSync());
       });
     }
   }
